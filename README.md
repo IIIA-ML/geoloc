@@ -1,2 +1,2 @@
 # geoloc
-Geolocalization by images
+Code for image geolocalization
