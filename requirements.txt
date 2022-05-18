@@ -1,0 +1,11 @@
+plotly
+jupyter
+pandas
+geopandas
+seaborn
+descartes
+sodapy
+mapclassify
+wget
+tqdm
+filelock
