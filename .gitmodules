@@ -1,0 +1,3 @@
+[submodule "FocalNet"]
+	path = FocalNet
+	url = git@github.com:IIIA-ML/FocalNet.git
