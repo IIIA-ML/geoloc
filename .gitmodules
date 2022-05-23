@@ -1,3 +1,6 @@
 [submodule "FocalNet"]
 	path = FocalNet
 	url = git@github.com:IIIA-ML/FocalNet.git
+[submodule "geoloc-data"]
+	path = geoloc-data
+	url = git@github.com:IIIA-ML/geoloc-data.git
