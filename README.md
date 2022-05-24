@@ -33,6 +33,17 @@ source bin/init-local.sh
 
 ## Development routines
 
+<details>
+
+<summary>Note for contributors</summary>
+
+### Branching workflow
+
+We follow the `master-develop` workflow. 
+That is, we work on the `develop` until it is stable to be merged into `master`. You can also use short-lived local 
+branches that diverges from the `develop` and later merged into it. 
+See the git [docs](https://git-scm.com/book/en/v2/Git-Branching-Branching-Workflows) for further reading.
+
 ### Pulling changes from the repository
 
 ```bash
@@ -43,18 +54,20 @@ git pull --recurse-submodules
 * Use `git status` to determine the files that you have changed.
 * For each of the modified submodules:
     * Go inside the submodule and use `git add` to include every file you have changed in a commit. 
-    * Use `git commit -m "<my commit message here>"` to commit changes to the local repository"
+    * Use `git commit -m "<my commit message here>"` to commit changes to the local repository.
     * Use `git push origin develop` to send the changes in the module to the repo.
 * Use `git add` to include every file you have changed in the commit. Do not forget to add the directories of the 
 modified submodules.
-* Use `git commit -m "<my commit message here>"` to commit changes to the local repository.
+* Use `git commit -m "<my commit message here>"` to commit changes to the local repo.
 * Use `git push origin develop` to send the changes to the remote repo. 
 
 ### Merging `develop` into `master`
 
-Create a _New [pull request](https://github.com/IIIA-ML/geoloc/pulls)_ with `base:master` and `compare:develop` setting.
+Create a new pull request with `base:master` and `compare:develop` setting.
 
 ### Adding new `env` vars
 
 If you need a new variable in the `etc/geoloc.env`, be sure to add it to the `etc/geoloc.env.default` with a non-secret 
 default value too. 
+
+</details>
