@@ -31,6 +31,10 @@ Run the initialization script:
 source bin/init-local.sh
 ```
 
+### To run FocalNets
+
+Please follow [README.md](./FocalNet/classification/README.md) for installation, data preparation and classification steps.
+
 ## Development routines
 
 <details>
