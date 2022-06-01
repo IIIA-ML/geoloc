@@ -33,11 +33,25 @@ source bin/init-local.sh
 
 ### Data crawler
 
-Please follow [Data\ preparation.ipynb](./Data\ Preparation.ipynb) for crawling data from multiple sources (Flickr, Mapillary).
+To crawl Flickr data into `flickr_raw.csv` run the script:
+
+```bash
+python3 flickr_crawler.py
+```
+
+To crawl Mapillary data into `mapillary_raw.csv` run the script:
+
+```bash
+python3 mapillary_crawler.py
+```
+
+### Data preparation
+
+Please follow [Data preparation](./Data&#32;Preparation.ipynb) for cleaning and downloading image data for multiple sources (Flickr, Mapillary).
 
 ### To run FocalNets
 
-Please follow [README.md](./FocalNet/classification/README.md) for installation, data preparation and classification steps.
+Please follow [FocalNets' README](./FocalNet/classification/README.md) for installation, data preparation and classification steps.
 
 ## Development routines
 
