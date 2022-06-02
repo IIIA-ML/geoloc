@@ -51,7 +51,7 @@ Please follow [Data preparation](./Data&#32;Preparation.ipynb) for cleaning and 
 
 ### To run FocalNets
 
-Please follow [FocalNets' README](./FocalNet/classification/README.md) for installation, data preparation and classification steps.
+Please follow [FocalNets' README](https://github.com/IIIA-ML/FocalNet/blob/main/classification/README.md) for installation, data preparation and classification steps.
 
 ## Development routines
 
