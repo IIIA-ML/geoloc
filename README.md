@@ -31,6 +31,38 @@ Run the initialization script:
 source bin/init-local.sh
 ```
 
+### Data preparation
+
+To crawl Flickr data into `flickr_raw.csv` run the script:
+
+```bash
+python3 flickr_crawler.py
+```
+
+To download Flickr images run the script:
+
+```bash
+python3 flickr_downloader.py
+```
+
+To crawl Mapillary data into `mapillary_raw.csv` run the script:
+
+```bash
+python3 mapillary_crawler.py
+```
+
+To download Mapillary images run the script:
+
+```bash
+python3 mapillary_downloader.py
+```
+
+For further interest, please follow [Data preparation](./Data&#32;Preparation.ipynb) for cleaning, downloading and visualizing the crawled image data from multiple sources (Flickr, Mapillary).
+
+### To run FocalNets
+
+Please follow [FocalNets' README](https://github.com/IIIA-ML/FocalNet/blob/main/classification/README.md) for installation, data preparation and classification steps.
+
 ## Development routines
 
 <details>
