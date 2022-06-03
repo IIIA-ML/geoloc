@@ -2,7 +2,8 @@ import concurrent.futures
 import csv
 import os
 import time
-
+import geopandas as gpd
+from shapely.geometry import shape, Point
 import goslate
 import requests
 from PyDictionary import PyDictionary
@@ -30,6 +31,22 @@ _data_crawler = ['barcelona',
                 'sant andreu',
                 'sant marti']
 MAX_COUNT = 10000
+
+def main():       
+    data_crawler = _data_crawler
+    elems = []
+    dictionary = PyDictionary()
+    synonym_list = []
+    save_counter = 0
+    for elem in data_crawler:
+        get_urls(elem, elem, MAX_COUNT, elems)
+        
+    save_csv(elems)
+    
+    df_districts = gpd.read_file('bcn/districtes.geojson')
+    df_barris = gpd.read_file('bcn/gran-barri.geojson')
+    df = pd.read_csv('bcn/flickr_raw.csv')
+    label_imgs(df, df_districts, df_barris)
 
 
 def get_urls(image_tag, term, MAX_COUNT, elems):
@@ -155,25 +172,11 @@ def download_from_url(url):
     except Exception as e:
         print("Failed to download url number {} because {}".format(url[0], e))
 
-
-def main():
-    data_crawler = _data_crawler
-    elems = []
-    dictionary = PyDictionary()
-    synonym_list = []
-    save_counter = 0
-    for elem in data_crawler:
-        get_urls(elem, elem, MAX_COUNT, elems)
-
-    save_csv(elems)
-    print("Done!")
-
-
 def save_csv(elems):
     pdElems = pd.DataFrame(elems)
     pdElems = pdElems.drop_duplicates()
     print("Writing out the urls in the current directory")
-    pdElems.to_csv('data/bcn/flickr_raw.csv')
+    pdElems.to_csv('bcn/flickr_raw.csv', index=False)
 
 
 def merge_csvs(main_path, diff_path):
@@ -181,14 +184,35 @@ def merge_csvs(main_path, diff_path):
     diff = pd.read_csv(diff_path, index_col=False)
     main.append(diff, ignore_index=True)
     main.to_csv(main_path)
+    
+def label_imgs(df, df_districts, df_barris):
+    
+    df['district'] = ""
+    df['neighborhood'] = ""
+
+    with tqdm(total=df.shape[0]) as pbar: 
+        for index, row in df.iterrows():
+            lat = row.lat
+            long = row.long
+            point = Point(long, lat)
+
+            for district in range(0,len(df_districts)):
+                polygon = shape(df_districts['geometry'][district])
+                if polygon.contains(point):
+                    df.loc[index, 'district'] = df_districts['NOM'][district]
+
+            for neighborhood in range(0,len(df_barris)):
+                polygon = shape(df_barris['geometry'][neighborhood])
+                if polygon.contains(point):
+                    df.loc[index, 'neighborhood'] = df_barris['NOM'][neighborhood]
+            pbar.update(1)
+
+    # df = df.drop(['Unnamed: 0', 'tag'], axis=1).reset_index().drop('index', axis=1)
+    df = df[df['district']!=""]
+    df = df[df['neighborhood']!=""]
+    df = df.drop_duplicates(subset=['url']).reset_index().drop('index', axis=1)
+    df.to_csv('bcn/flickr.csv', index=False)
 
 
 if __name__ == '__main__':
     main()
-    #put_images("prova.csv")
-    # df = pd.read_csv("train_flickr.csv", index_col=1)
-    # print(df.columns)
-    # df.drop_duplicates(subset=['Unnamed: 0'])
-    # df.drop_duplicates()
-
-    # df.to_csv('train.csv')
