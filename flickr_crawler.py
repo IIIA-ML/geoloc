@@ -18,19 +18,69 @@ secret = os.environ.get("FLICKR_SECRET")
 
 _data_crawler = ['barcelona',
                 'ciutat vella',
-                'eixampla',
-                'sants',
-                'montjuic',
+                'eixample',
+                'sants montjuic',
                 'les corts',
-                'sarria',
-                'sant gervasi',
+                'sarria sant gervasi',
                 'gracia',
-                'horta',
-                'guinardo',
+                'horta guinardo',
                 'nou barris',
                 'sant andreu',
                 'sant marti']
-MAX_COUNT = 10000
+
+_data_crawler_extended = ['barcelona',
+                'ciutat vella',
+                'eixample',
+                'sants montjuic',
+                'les corts',
+                'sarria sant gervasi',
+                'gracia',
+                'horta guinardo',
+                'nou barris',
+                'sant andreu',
+                'sant marti',
+                'Sarrià, les Tres Torres i Vallvidrera',
+                'Vallcarca, el Coll i la Salut',
+                'la Vila de Gràcia',
+                "el Camp d'en Grassot i Gràcia Nova",
+                'el Guinardó',
+                "el Carmel i Can Baró",
+                "els Barris de la Vall d'Hebron",
+                "Horta i la Font d'en Fargues",
+                "Vilapicina, Porta, el Turó de la Peira i Can Peguera",
+                "la Guineueta, Verdun i la Prosperitat",
+                "Canyelles, les Roquetes i la Trinitat Nova",
+                "Torre Baró, Ciutat Meridiana i Vallbona",
+                "la Trinitat Vella, Baró de Viver i el Bon Pastor",
+                "Sant Andreu",
+                "la Sagrera, el Congrés i Navas",
+                "el Clot i el Camp de l'Arpa",
+                "el Parc, la Llacuna i la Vila Olímpica",
+                "el Poblenou i Diagonal Mar",
+                "el Besòs, el Maresme i Provençals",
+                "Sant Martí, la Verneda i la Pau",
+                "el Raval",
+                "el Barri Gòtic",
+                "la Barceloneta",
+                "Sant Pere, Santa Caterina i la Ribera",
+                "el Fort Pienc",
+                "la Sagrada Família",
+                "la Dreta de l'Eixample",
+                "l'Antiga Esquerra de l'Eixample",
+                "la Nova Esquerra de l'Eixample",
+                "Sant Antoni",
+                "el Poble Sec i Montjuïc",
+                "la Marina i la Zona Franca - Port",
+                "la Font de la Guatlla, Hostafrancs i la Bordeta",
+                "Sants i Badal",
+                "les Corts",
+                "la Maternitat i Sant Ramon",
+                "Pedralbes",
+                "Vallvidrera, el Tibidabo i les Planes",
+                "Sarrià i les Tres Torres",
+                "Sant Gervasi - la Bonanova i el Putget"
+                ]
+MAX_COUNT = 1000000
 
 def main():       
     data_crawler = _data_crawler
@@ -40,12 +90,13 @@ def main():
     save_counter = 0
     for elem in data_crawler:
         get_urls(elem, elem, MAX_COUNT, elems)
-        
-    save_csv(elems)
+    
+    filename = 'bcn/flickr_raw.csv'
+    save_csv(elems, filename)
     
     df_districts = gpd.read_file('bcn/districtes.geojson')
     df_barris = gpd.read_file('bcn/gran-barri.geojson')
-    df = pd.read_csv('bcn/flickr_raw.csv')
+    df = pd.read_csv(filename)
     label_imgs(df, df_districts, df_barris)
 
 
@@ -127,63 +178,14 @@ def get_urls(image_tag, term, MAX_COUNT, elems):
             except:
                 print('Server ERROR')
     print("Stop fetching urls for query {}".format(term))
-    #save_csv(elems)
 
-
-def put_images(FILE_NAME):
-    urls = []
-    with open(FILE_NAME, newline="") as csvfile:
-        doc = csv.reader(csvfile, delimiter=",")
-        for row in doc:
-            if row[1].startswith("https"):
-                urls.append(row[1])
-    """if not os.path.isdir(os.path.join(os.getcwd(), FILE_NAME.split("_")[0])):
-        os.mkdir(FILE_NAME.split("_")[0])"""
-    t0 = time.time()
-    dup_count = 0
-    with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
-        for url in enumerate(urls):
-            if os.path.exists(os.path.join("E:", "dataset", "train", url[1].split("/")[-1])) or \
-                    os.path.exists(os.path.join("E:", "dataset", "train_1", url[1].split("/")[-1]) or os.path.exists(os.path.join("E:", "dataset", "train_2", url[1].split("/")[-1]))):
-                dup_count += 1
-                print("already downloaded: {}".format(dup_count))
-                continue
-            executor.submit(download_from_url, url)
-    t1 = time.time()
-    print("Done with download, job took {} seconds".format(t1 - t0))
-
-
-def download_from_url(url):
-    try:
-        resp = requests.get(url[1], stream=True)
-        c = 0
-        """
-        while resp.status_code != 200 and c < 10:
-            print("Failed to download")
-            time.sleep(3)
-            resp = requests.get(url[1], stream=True)
-            c += 1
-        """
-        path_to_write = os.path.join("E:", "dataset", "train_3", url[1].split("/")[-1])
-        outfile = open(path_to_write, 'wb')
-        outfile.write(resp.content)
-        outfile.close()
-        print("Done downloading {} ".format(url[0] + 1))
-    except Exception as e:
-        print("Failed to download url number {} because {}".format(url[0], e))
-
-def save_csv(elems):
+    
+def save_csv(elems, filename):
     pdElems = pd.DataFrame(elems)
     pdElems = pdElems.drop_duplicates()
     print("Writing out the urls in the current directory")
-    pdElems.to_csv('bcn/flickr_raw.csv', index=False)
-
-
-def merge_csvs(main_path, diff_path):
-    main = pd.read_csv(main_path, index_col=False)
-    diff = pd.read_csv(diff_path, index_col=False)
-    main.append(diff, ignore_index=True)
-    main.to_csv(main_path)
+    pdElems.to_csv(filename, index=False)
+    
     
 def label_imgs(df, df_districts, df_barris):
     
