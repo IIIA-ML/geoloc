@@ -23,15 +23,21 @@ def main():
                 os.makedirs(f'mapillary/train/{row.district}')
             if not os.path.exists(f'mapillary/val/{row.district}'):
                 os.makedirs(f'mapillary/val/{row.district}')
-
+            if not os.path.exists(f'mapillary/test/{row.district}'):
+                os.makedirs(f'mapillary/test/{row.district}')
+            
             path, dirs, files = next(os.walk(f'mapillary/train/{row.district}'))
+            path_val, dirs_val, files_val = next(os.walk(f'mapillary/val/{row.district}'))
             file_count = len(files)
+            file_count_val = len(files_val)
 
-            # split into 90% training 10% validation
-            if (file_count < (0.9 * len(df[df['district'] == row.district]))):
+            # split into 80% training 10% validation 10% test
+            if (file_count < (0.8 * len(df[df['district'] == row.district]))):
                 path = 'mapillary/train'
-            else:
+            elif (file_count_val < (0.1 * len(df[df['district'] == row.district]))):
                 path = 'mapillary/val'
+            else:
+                 path = 'mapillary/test' 
 
             try:
                 urllib.request.urlretrieve(row.url, f'{path}/{row.district}/{index}.jpeg')

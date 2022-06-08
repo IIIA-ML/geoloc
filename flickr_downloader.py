@@ -14,6 +14,7 @@ from shapely.geometry import shape, Point
 
 
 def main():    
+    df = pd.read_csv('geoloc-data/bcn/flickr.csv')    
     # download images into flickr directory
     with tqdm(total=df.shape[0]) as pbar: 
         for index, row in df.iterrows():
@@ -22,15 +23,21 @@ def main():
                 os.makedirs(f'flickr/train/{row.district}')
             if not os.path.exists(f'flickr/val/{row.district}'):
                 os.makedirs(f'flickr/val/{row.district}')
+            if not os.path.exists(f'flickr/test/{row.district}'):
+                os.makedirs(f'flickr/test/{row.district}')
 
             path, dirs, files = next(os.walk(f'flickr/train/{row.district}'))
+            path_val, dirs_val, files_val = next(os.walk(f'flickr/val/{row.district}'))
             file_count = len(files)
+            file_count_val = len(files_val)
 
-            # split into 90% training 10% validation
-            if (file_count < (0.9 * len(df[df['district'] == row.district]))):
+            # split into 80% training 10% validation 10% test
+            if (file_count < (0.8 * len(df[df['district'] == row.district]))):
                 path = 'flickr/train'
-            else:
+            elif (file_count_val < (0.1 * len(df[df['district'] == row.district]))):
                 path = 'flickr/val'
+            else:
+                 path = 'flickr/test'   
 
             try:
                 urllib.request.urlretrieve(row.url, f'{path}/{row.district}/{index}.jpeg')
