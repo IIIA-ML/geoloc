@@ -91,7 +91,7 @@ git pull --recurse-submodules
 * Use `git add` to include every file you have changed in the commit. Do not forget to add the directories of the 
 modified submodules.
 * Use `git commit -m "<my commit message here>"` to commit changes to the local repo.
-* Use `git push origin develop` to send the changes to the remote repo. 
+* Use `git push` to send the changes to the remote repo. 
 
 ### Merging `develop` into `master`
 
